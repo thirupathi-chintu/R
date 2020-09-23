@@ -1,4 +1,5 @@
-FROM ubuntu:bionic
+FROM openanalytics/r-base
+#FROM ubuntu:bionic
 MAINTAINER Thirupathi Peraboina <thirupathiperaboina@gmail.com>
 
 # update apt & install packages
@@ -50,7 +51,6 @@ RUN apt-get update -qq && \
     odbc-postgresql \
     tdsodbc \
     unixodbc \
-    libmagick++-dev \
     unixodbc-dev \
     wget && \
     rm -rf /var/lib/apt/lists/*
@@ -138,19 +138,45 @@ RUN wget https://github.com/jgm/pandoc/releases/download/2.3.1/pandoc-2.3.1-1-am
 # Set default locale
 RUN update-locale --reset LANG=C.UTF-8
 
-ARG R_VERSION=3.5.2
-
-# Install R
-RUN wget -q https://cdn.rstudio.com/r/ubuntu-1804/R-${R_VERSION}-ubuntu-1804.tar.gz -O /tmp/R-${R_VERSION}.tar.gz && \
-    mkdir -p /opt/R && \
-    tar zx -C /opt/R -f /tmp/R-${R_VERSION}.tar.gz && \
-    ln -s /opt/R/${R_VERSION}/bin/R /usr/bin/R && \
-    ln -s /opt/R/${R_VERSION}/bin/Rscript /usr/bin/Rscript && \
-    ln -s /opt/R/${R_VERSION}/lib/R /usr/lib/R && \
-    rm /tmp/R-${R_VERSION}.tar.gz
-
 # set UTF-8
 RUN echo "LANG=C.UTF-8" >> /usr/lib/R/etc/Renviron.site
 
+RUN apt-get update && apt-get install -y \
+    sudo \
+    pandoc \
+    pandoc-citeproc \
+    libcurl4-gnutls-dev \
+    libcairo2-dev \
+    libxt-dev \
+    libssl-dev \
+    libssh2-1-dev \
+    libssl1.0.0 \
+    libxml2-dev \
+    libmariadb-client-lgpl-dev \
+    texlive-full \
+    libmariadbclient-dev
+    
+ 
+RUN apt-get update -qyy
+
+RUN apt-get update && apt-get install -y \
+    libmagick++-dev
+
+# basic shiny functionality
+RUN R -e "install.packages(c('shiny', 'shinycssloaders', 'dplyr', 'jpeg', 'pracma', 'data.table', 'DT', 'shinyjs', 'shinyBS'))"# copy the app to the image
+
+RUN R -e "install.packages(c('shiny', 'tsibble', 'visdat', 'RcolorBrewer', 'zip', 'imputeTS', 'ggrepel', 'auth0', 'tidyverse', 'shinydashboard', 'dplyr', 'shinyjs', 'DT', 'RMariaDB', 'glue', 'stringi', 'lubridate', 'DBI', 'shinyalert', 'shinythemes', 'shinycssloaders', 'plotly', 'shinyWidgets', 'RVerbalExpressions', 'tidypredict', 'dygraphs', 'grid', 'gt', 'ggtext', 'openxlsx', 'shinyjs', 'formattable', 'ggridges', 'patchwork', 'janitor', 'xts', 'RMariaDB', 'aws.s3'))"
+RUN R -e "install.packages(c('ggiraph', 'slider', 'webshot', 'kableExtra', 'xtable', 'huxtable', 'rmarkdown', 'gridExtra', 'magick', 'ggplot2'))"
+
+RUN R -e "install.packages(c('fitdistrplus', 'foreach', 'shinycustomloader', 'schoolmath', 'rWind', 'hablar', 'naniar', 'grid', 'cowplot', 'googlesheets4', 'googledrive', 'circular', 'rdrop2', 'repmis', 'zoo', 'geosphere'))"
+
+RUN R -e "install.packages(c('hms','devtools','remotes'))"
+
+RUN R -e "install.packages(c('rio', 'sjmisc' , 'RColorBrewer', 'flextable'))"
+
+#RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/DT/DT_0.14.tar.gz', repos=NULL, type='source')"
+
+
 
 CMD ["R"]
+
