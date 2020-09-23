@@ -1,0 +1,6 @@
+#!/bin/bash
+set -x
+set -e
+
+apt-get update -qq
+apt-get install -y libbz2-dev coinor-libsymphony-dev coinor-libcgl-dev

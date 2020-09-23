@@ -1,0 +1,12 @@
+#!/bin/bash
+set -x
+set -e
+
+# need for add-apt-repository
+apt-get update -qq
+apt-get install -y software-properties-common
+
+add-apt-repository -y ppa:jonathonf/ffmpeg-4
+
+apt-get update -qq
+apt-get install -y libavfilter-dev libavformat-dev
