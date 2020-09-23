@@ -186,7 +186,8 @@ RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
 	postgis \
 	r-base-dev \
 	libavfilter-dev \
-	jq
+	jq \
+	libudunits2-dev
 
 RUN apt-get install -y texinfo \
        texlive-base \
@@ -226,6 +227,9 @@ RUN R -e "install.packages(c('fitdistrplus', 'foreach', 'shinycustomloader', 'sc
 RUN R -e "install.packages(c('hms','devtools','remotes'), dependencies = TRUE)"
 
 RUN R -e "install.packages(c('rio', 'sjmisc' , 'RColorBrewer', 'flextable'), dependencies = TRUE)"
+
+RUN R -e "install.packages(c('rio', 'sjmisc' , 'RColorBrewer', 'flextable', 'xts', 'zoo', 'ggmap', 'evaluate', 'session', 'sf', 'ggsn'), dependencies = TRUE)"
+
 
 #RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/DT/DT_0.14.tar.gz', repos=NULL, type='source')"
 
