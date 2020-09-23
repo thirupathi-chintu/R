@@ -39,6 +39,7 @@ RUN apt-get update -qq && \
     libnetcdf-dev \
     libprocps4-dev \
     libproj-dev \
+    libmagick++-dev \
     libprotoc-dev \
     libquantlib0-dev \
     libsasl2-dev \

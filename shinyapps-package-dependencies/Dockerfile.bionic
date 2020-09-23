@@ -50,6 +50,7 @@ RUN apt-get update -qq && \
     odbc-postgresql \
     tdsodbc \
     unixodbc \
+    libmagick++-dev \
     unixodbc-dev \
     wget && \
     rm -rf /var/lib/apt/lists/*
