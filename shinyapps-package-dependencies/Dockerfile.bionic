@@ -154,28 +154,79 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libmariadb-client-lgpl-dev \
     texlive-full \
-    libmariadbclient-dev
-    
- 
-RUN apt-get update -qyy
-
-RUN apt-get update && apt-get install -y \
+    libmariadbclient-dev \
     libmagick++-dev
+    
+    
+
+RUN apt-get update && apt-get install -y software-properties-common
+RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+
+#RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu bionic-cran35/  " >> /etc/apt/sources.list
+#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+
+RUN apt-get update
+RUN apt-get upgrade -y
+
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
+ && apt-get install -y \
+	libcurl4-openssl-dev \
+	qpdf \
+	pandoc \
+	make \
+	wget \
+	default-libmysqlclient-dev \
+	libmysqlclient-dev \
+	git \
+	libgdal-dev \
+	libgeos-dev \
+	libproj-dev \
+	liblwgeom-dev \
+	libudunits2-dev \
+	postgis \
+	r-base-dev \
+	libavfilter-dev
+
+RUN apt-get install -y texinfo \
+       texlive-base \
+       texlive-extra-utils \
+       texlive-fonts-extra \
+       texlive-fonts-recommended \
+       texlive-generic-recommended \
+       texlive-latex-base \
+       texlive-latex-extra \
+       texlive-latex-recommended
+
+# stuff for the tmaptools/rmapshaper/geojsonio etc stack:
+RUN apt-get install -y libv8-3.14-dev libprotobuf-dev protobuf-compiler libcairo2-dev
+#RUN add-apt-repository -y ppa:opencpu/jq
+RUN apt-get update
+RUN apt-get install -y libjq-dev
+
+RUN Rscript -e 'install.packages(c("sf", "lwgeom", "covr", "raster"), dependencies = TRUE, repos = "https://cloud.r-project.org")'
+RUN R -e "install.packages(c('KernSmooth', 'mapview', 'raster', 'rgdal', 'rgeos', 'sp', 'spatstat', 'stars', 'tmap', 'classInt'), dependencies = TRUE)"
+RUN git clone   https://github.com/r-spatial/sf.git
+RUN R CMD build --no-build-vignettes sf
+RUN R CMD INSTALL sf_*tar.gz
+
+RUN apt-get install -y pandoc pandoc-citeproc
+RUN R -e "install.packages(c('mapview', 'raster', 'rgdal', 'rgeos', 'sp', 'spatstat', 'tmap'), dependencies = TRUE)"
+RUN R CMD check --as-cran sf_*tar.gz
+
 
 # basic shiny functionality
-RUN R -e "install.packages(c('shiny', 'shinycssloaders', 'dplyr', 'jpeg', 'pracma', 'data.table', 'DT', 'shinyjs', 'shinyBS'))"# copy the app to the image
+RUN R -e "install.packages(c('shiny', 'shinycssloaders', 'dplyr', 'jpeg', 'pracma', 'data.table', 'DT', 'shinyjs', 'shinyBS'), dependencies = TRUE)"# copy the app to the image
 
-RUN R -e "install.packages(c('shiny', 'tsibble', 'visdat', 'RcolorBrewer', 'zip', 'imputeTS', 'ggrepel', 'auth0', 'tidyverse', 'shinydashboard', 'dplyr', 'shinyjs', 'DT', 'RMariaDB', 'glue', 'stringi', 'lubridate', 'DBI', 'shinyalert', 'shinythemes', 'shinycssloaders', 'plotly', 'shinyWidgets', 'RVerbalExpressions', 'tidypredict', 'dygraphs', 'grid', 'gt', 'ggtext', 'openxlsx', 'shinyjs', 'formattable', 'ggridges', 'patchwork', 'janitor', 'xts', 'RMariaDB', 'aws.s3'))"
-RUN R -e "install.packages(c('ggiraph', 'slider', 'webshot', 'kableExtra', 'xtable', 'huxtable', 'rmarkdown', 'gridExtra', 'magick', 'ggplot2'))"
+RUN R -e "install.packages(c('shiny', 'tsibble', 'visdat', 'RcolorBrewer', 'zip', 'imputeTS', 'ggrepel', 'auth0', 'tidyverse', 'shinydashboard', 'dplyr', 'shinyjs', 'DT', 'RMariaDB', 'glue', 'stringi', 'lubridate', 'DBI', 'shinyalert', 'shinythemes', 'shinycssloaders', 'plotly', 'shinyWidgets', 'RVerbalExpressions', 'tidypredict', 'dygraphs', 'grid', 'gt', 'ggtext', 'openxlsx', 'shinyjs', 'formattable', 'ggridges', 'patchwork', 'janitor', 'xts', 'RMariaDB', 'aws.s3'), dependencies = TRUE)"
+RUN R -e "install.packages(c('ggiraph', 'slider', 'webshot', 'kableExtra', 'xtable', 'huxtable', 'rmarkdown', 'gridExtra', 'magick', 'ggplot2'), dependencies = TRUE)"
 
-RUN R -e "install.packages(c('fitdistrplus', 'foreach', 'shinycustomloader', 'schoolmath', 'rWind', 'hablar', 'naniar', 'grid', 'cowplot', 'googlesheets4', 'googledrive', 'circular', 'rdrop2', 'repmis', 'zoo', 'geosphere'))"
+RUN R -e "install.packages(c('fitdistrplus', 'foreach', 'shinycustomloader', 'schoolmath', 'rWind', 'hablar', 'naniar', 'grid', 'cowplot', 'googlesheets4', 'googledrive', 'circular', 'rdrop2', 'repmis', 'zoo', 'geosphere'), dependencies = TRUE)"
 
-RUN R -e "install.packages(c('hms','devtools','remotes'))"
+RUN R -e "install.packages(c('hms','devtools','remotes'), dependencies = TRUE)"
 
-RUN R -e "install.packages(c('rio', 'sjmisc' , 'RColorBrewer', 'flextable'))"
+RUN R -e "install.packages(c('rio', 'sjmisc' , 'RColorBrewer', 'flextable'), dependencies = TRUE)"
 
 #RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/DT/DT_0.14.tar.gz', repos=NULL, type='source')"
-
 
 
 CMD ["R"]
