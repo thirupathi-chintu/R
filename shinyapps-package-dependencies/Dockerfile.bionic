@@ -185,7 +185,8 @@ RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
 	libudunits2-dev \
 	postgis \
 	r-base-dev \
-	libavfilter-dev
+	libavfilter-dev \
+	jq
 
 RUN apt-get install -y texinfo \
        texlive-base \
@@ -203,7 +204,7 @@ RUN apt-get install -y libv8-3.14-dev libprotobuf-dev protobuf-compiler libcairo
 RUN apt-get update
 RUN apt-get install -y libjq-dev
 
-RUN Rscript -e 'install.packages(c("sf", "lwgeom", "covr", "raster"), dependencies = TRUE, repos = "https://cloud.r-project.org")'
+RUN Rscript -e 'install.packages(c("sf", "lwgeom", "covr", "raster", "forecast"), dependencies = TRUE)'
 RUN R -e "install.packages(c('KernSmooth', 'mapview', 'raster', 'rgdal', 'rgeos', 'sp', 'spatstat', 'stars', 'tmap', 'classInt'), dependencies = TRUE)"
 RUN git clone   https://github.com/r-spatial/sf.git
 RUN R CMD build --no-build-vignettes sf
@@ -211,11 +212,11 @@ RUN R CMD INSTALL sf_*tar.gz
 
 RUN apt-get install -y pandoc pandoc-citeproc
 RUN R -e "install.packages(c('mapview', 'raster', 'rgdal', 'rgeos', 'sp', 'spatstat', 'tmap'), dependencies = TRUE)"
-RUN R CMD check --as-cran sf_*tar.gz
+#RUN R CMD check --as-cran sf_*tar.gz
 
 
 # basic shiny functionality
-RUN R -e "install.packages(c('shiny', 'shinycssloaders', 'dplyr', 'jpeg', 'pracma', 'data.table', 'DT', 'shinyjs', 'shinyBS'), dependencies = TRUE)"# copy the app to the image
+RUN R -e "install.packages(c('shiny', 'shinycssloaders', 'dplyr', 'jpeg', 'pracma', 'data.table', 'DT', 'shinyjs', 'shinyBS'), dependencies = TRUE)"
 
 RUN R -e "install.packages(c('shiny', 'tsibble', 'visdat', 'RcolorBrewer', 'zip', 'imputeTS', 'ggrepel', 'auth0', 'tidyverse', 'shinydashboard', 'dplyr', 'shinyjs', 'DT', 'RMariaDB', 'glue', 'stringi', 'lubridate', 'DBI', 'shinyalert', 'shinythemes', 'shinycssloaders', 'plotly', 'shinyWidgets', 'RVerbalExpressions', 'tidypredict', 'dygraphs', 'grid', 'gt', 'ggtext', 'openxlsx', 'shinyjs', 'formattable', 'ggridges', 'patchwork', 'janitor', 'xts', 'RMariaDB', 'aws.s3'), dependencies = TRUE)"
 RUN R -e "install.packages(c('ggiraph', 'slider', 'webshot', 'kableExtra', 'xtable', 'huxtable', 'rmarkdown', 'gridExtra', 'magick', 'ggplot2'), dependencies = TRUE)"
