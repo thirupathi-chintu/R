@@ -155,12 +155,16 @@ RUN apt-get update && apt-get install -y \
     libmariadb-client-lgpl-dev \
     texlive-full \
     libmariadbclient-dev \
-    libmagick++-dev
-    
+    libmagick++-dev \
+  	libudunits2-dev 
     
 
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+
+RUN sudo apt update
+#RUN sudo apt install libgdal26 gdal-bin python-gdal python3-gdal
+#RUN sudo apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev
 
 #RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu bionic-cran35/  " >> /etc/apt/sources.list
 #RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
@@ -186,8 +190,7 @@ RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
 	postgis \
 	r-base-dev \
 	libavfilter-dev \
-	jq \
-	libudunits2-dev
+	jq
 
 RUN apt-get install -y texinfo \
        texlive-base \
@@ -205,7 +208,7 @@ RUN apt-get install -y libv8-3.14-dev libprotobuf-dev protobuf-compiler libcairo
 RUN apt-get update
 RUN apt-get install -y libjq-dev
 
-RUN Rscript -e 'install.packages(c("sf", "lwgeom", "covr", "raster", "forecast"), dependencies = TRUE)'
+RUN Rscript -e "install.packages(c('sf', 'lwgeom', 'covr', 'raster', 'forecast', 'lattice', 'sp'), dependencies = TRUE)"
 RUN R -e "install.packages(c('KernSmooth', 'mapview', 'raster', 'rgdal', 'rgeos', 'sp', 'spatstat', 'stars', 'tmap', 'classInt'), dependencies = TRUE)"
 RUN git clone   https://github.com/r-spatial/sf.git
 RUN R CMD build --no-build-vignettes sf
