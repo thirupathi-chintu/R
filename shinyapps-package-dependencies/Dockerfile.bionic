@@ -67,7 +67,9 @@ RUN cd /tmp && \
 
 # Install JDK and Cargo separately to avoid the recommended packages
 RUN apt-get update -qq && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openjdk-8-jdk cargo && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y default-jdk cargo && \
+    apt-get -y install default-jre && \
     rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update -qq && \
@@ -156,15 +158,26 @@ RUN apt-get update && apt-get install -y \
     texlive-full \
     libmariadbclient-dev \
     libmagick++-dev \
-  	libudunits2-dev 
+  	libudunits2-dev \
+  	libtesseract-dev \
+  	libleptonica-dev
     
 
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+RUN add-apt-repository ppa:marutter/c2d4u3.5
+
+RUN apt-get update -qq && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    libquantlib0* \
+    r-base-core \
+    r-cran-rjava \
+    equivs
 
 RUN sudo apt update
+RUN sudo apt-get install openscenegraph-plugin-osgearth libosgearth-dev
+RUN sudo apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev gdal-bin
 #RUN sudo apt install libgdal26 gdal-bin python-gdal python3-gdal
-#RUN sudo apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev
 
 #RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu bionic-cran35/  " >> /etc/apt/sources.list
 #RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
@@ -192,6 +205,11 @@ RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
 	libavfilter-dev \
 	jq
 
+RUN apt-get install -y libv8-3.14-dev \
+        libprotobuf-dev \
+        protobuf-compiler \
+        libcairo2-dev
+
 RUN apt-get install -y texinfo \
        texlive-base \
        texlive-extra-utils \
@@ -203,13 +221,15 @@ RUN apt-get install -y texinfo \
        texlive-latex-recommended
 
 # stuff for the tmaptools/rmapshaper/geojsonio etc stack:
-RUN apt-get install -y libv8-3.14-dev libprotobuf-dev protobuf-compiler libcairo2-dev
 RUN add-apt-repository -y ppa:cran/poppler
 #RUN add-apt-repository -y ppa:opencpu/jq
 RUN apt-get update
-RUN apt-get install -y libjq-dev libpoppler-cpp-dev
-
-
+RUN apt-get install -y libjq-dev \
+      libpoppler-cpp-dev \
+      tesseract-ocr-eng \
+      libsodium-dev
+      
+RUN R CMD javareconf
 
 RUN Rscript -e "install.packages(c('sf', 'lwgeom', 'covr', 'raster', 'forecast', 'lattice', 'sp'), dependencies = TRUE)"
 RUN R -e "install.packages(c('KernSmooth', 'mapview', 'raster', 'rgdal', 'rgeos', 'sp', 'spatstat', 'stars', 'tmap', 'classInt'), dependencies = TRUE)"
@@ -223,6 +243,7 @@ RUN R -e "install.packages(c('mapview', 'raster', 'rgdal', 'rgeos', 'sp', 'spats
 
 
 # basic shiny functionality
+
 RUN R -e "install.packages(c('shiny', 'shinycssloaders', 'dplyr', 'jpeg', 'pracma', 'data.table', 'DT', 'shinyjs', 'shinyBS'), dependencies = TRUE)"
 
 RUN R -e "install.packages(c('shiny', 'tsibble', 'visdat', 'RcolorBrewer', 'zip', 'imputeTS', 'ggrepel', 'auth0', 'tidyverse', 'shinydashboard', 'dplyr', 'shinyjs', 'DT', 'RMariaDB', 'glue', 'stringi', 'lubridate', 'DBI', 'shinyalert', 'shinythemes', 'shinycssloaders', 'plotly', 'shinyWidgets', 'RVerbalExpressions', 'tidypredict', 'dygraphs', 'grid', 'gt', 'ggtext', 'openxlsx', 'shinyjs', 'formattable', 'ggridges', 'patchwork', 'janitor', 'xts', 'RMariaDB', 'aws.s3'), dependencies = TRUE)"
@@ -236,12 +257,12 @@ RUN R -e "install.packages(c('rio', 'sjmisc' , 'RColorBrewer', 'flextable'), dep
 
 RUN R -e "install.packages(c('rio', 'sjmisc' , 'RColorBrewer', 'flextable', 'xts', 'zoo', 'ggmap', 'evaluate', 'session', 'sf', 'ggsn'), dependencies = TRUE)"
 
-RUN R -e "install.packages(c('pdftools', 'survival', 'fitdistrplus', 'outliers', 'tabulizer', 'slackr'), dependencies = TRUE)"
+RUN R -e "install.packages(c('pdftools', 'survival', 'fitdistrplus', 'outliers','rJava', 'tabulizerjars', 'tabulizer', 'slackr', 'rintrojs', 'mapboxapi'), dependencies = TRUE)"
 
-COPY Rprofile.site /usr/lib/R/etc/
 
 #RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/DT/DT_0.14.tar.gz', repos=NULL, type='source')"
 
+COPY Rprofile.site /usr/lib/R/etc/
 
 CMD ["R"]
 
