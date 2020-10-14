@@ -268,6 +268,7 @@ RUN R -e "remotes::install_github('yusuzech/shinyEx')"
 
 RUN R -e "install.packages(c('Matrix', 'survival', 'fitdistrplus', 'outliers'), repos='http://cran.rstudio.com/')"
 
+RUN R -e "install.packages(c('gplots', 'rworldmap'), repos='http://cran.rstudio.com/')"
 
 #RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/DT/DT_0.14.tar.gz', repos=NULL, type='source')"
 
